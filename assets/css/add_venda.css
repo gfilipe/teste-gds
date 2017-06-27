@@ -142,3 +142,11 @@ body, html {
     background: #fff;
     margin-top: 40px;
 }
+
+table.tblVendas tbody tr td{
+    vertical-align: middle !important;
+}
+
+.btOpcoes{
+    margin-bottom: 20px !important;
+}

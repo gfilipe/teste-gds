@@ -2,26 +2,12 @@
 
 class Produto extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
 	public function index()
 	{
-		//pagina para login de usuários
-		$this->load->model('Produto_model','produto',TRUE);
-		$this->load->view('lista_produtos');
+		//pagina para listar todos os produtos cadastrados
+		$this->load->model('Produto_model','prod',TRUE);
+		$data['produtos'] = $this->prod->listAllProducts();
+		$this->load->view('listar_produtos',$data);
 	}
 
 	public function add()
@@ -34,7 +20,7 @@ class Produto extends CI_Controller {
 
 	public function cadastrar()
 	{
-		//cadastra o usuário no banco de dados
+		//cadastra o produto no banco de dados
 		$this->load->model('Produto_model','prod',TRUE);
 		$add = $this->prod->inserir($this->input->post());
 		if($add){
@@ -46,20 +32,69 @@ class Produto extends CI_Controller {
 		}
 	}
 
-	public function deletar()
-	{
-		
-		
+	public function delete($idproduto){
+		//deleta o produto no banco de dados
+		$this->load->model('Produto_model','prod',TRUE);
+		$existe = $this->prod->verificaExistencia($idproduto);
+		if($existe){
+			$del = $this->prod->delete($idproduto);
+			if($del){
+				echo '<script>alert("produto excluído com sucesso!");</script>';
+				redirect('produto/','refresh');
+			}else{
+				echo '<script>alert("não foi possível excluir esse produto!");</script>';
+				redirect('produto/','refresh');
+			}
+		}else{
+			echo '<script>alert("produto não encontrado ou inexistente!");</script>';
+			redirect('produto/','refresh');
+		}		
 	}
 
-	public function alterar()
-	{
-		
-		
+	public function edit($idproduto){
+		//direciona para a página de edição de um determinado produto
+		$this->load->model('Produto_model','prod',TRUE);
+		$existe = $this->prod->verificaExistencia($idproduto);
+		if($existe){
+			$this->load->model('Categoria_model','cat',TRUE);
+			$data['produto'] = $this->prod->getProdutoByID($idproduto);
+			$data['categorias'] = $this->cat->listar();
+			$this->load->view('edit_produto',$data);
+		}else{
+			echo '<script>alert("produto não encontrado ou inexistente!");</script>';
+			redirect('produto/','refresh');
+		}
+	}
+
+	public function atualizar($idproduto){
+		//atualiza o produto no banco de dados
+		$this->load->model('Produto_model','prod',TRUE);
+		$existe = $this->prod->verificaExistencia($idproduto);
+		if($existe){
+			$dados = array(
+				'idproduto' => $idproduto,
+				'produto' => $this->input->post('produto'),
+				'preco' => $this->input->post('preco'),
+				'status' => $this->input->post('status'),
+				'idcategoria' => $this->input->post('idcategoria'),
+				'saldo' => $this->input->post('saldo')
+			);
+			$add = $this->prod->atualizar($dados);
+			if($add){
+				echo '<script>alert("produto atualizado com sucesso!");</script>';
+				redirect('produto/','refresh');
+			}else{
+				echo '<script>alert("não foi possível atualizar esse produto!");</script>';
+				redirect('produto/','refresh');
+			}
+		}else{
+			echo '<script>alert("produto não encontrado ou inexistente!");</script>';
+			redirect('produto/','refresh');
+		}
 	}
 
 
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+/* End of file Produto.php */
+/* Location: ./application/controllers/Produto.php */

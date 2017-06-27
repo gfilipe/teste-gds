@@ -2,25 +2,12 @@
 
 class Cliente extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
 	public function index()
 	{
 		//pagina para listar os clientes cadastrados
-		$this->load->view('listar_usuario');
+		$this->load->model('Cliente_model','cli',TRUE);
+		$data['clientes'] = $this->cli->showAllCustomers();
+		$this->load->view('listar_clientes',$data);
 	}
 
 	public function add()
@@ -43,6 +30,61 @@ class Cliente extends CI_Controller {
 		}
 	}
 
+	public function delete($idcliente){
+		$this->load->model('Cliente_model','cli',TRUE);
+		$existe = $this->cli->verificaExistencia($idcliente);
+		if($existe){
+			$del = $this->cli->delete($idcliente);
+			if($del){
+				echo '<script>alert("cliente excluído com sucesso!");</script>';
+				redirect('cliente/','refresh');
+			}else{
+				echo '<script>alert("não foi possível excluir esse cliente!");</script>';
+				redirect('cliente/','refresh');
+			}
+		}else{
+			echo '<script>alert("Cliente não encontrado ou inexistente!");</script>';
+			redirect('cliente/','refresh');
+		}
+	}
+
+	public function edit($idcliente){
+		$this->load->model('Cliente_model','cli',TRUE);
+		$existe = $this->cli->verificaExistencia($idcliente);
+		if($existe){
+			$data['cliente'] = $this->cli->getClienteByID($idcliente);
+			$this->load->view('edit_cliente',$data);
+		}else{
+			echo '<script>alert("Cliente não encontrado ou inexistente!");</script>';
+			redirect('cliente/','refresh');
+		}
+	}
+
+	public function atualizar($idcliente){
+		//cadastra o cliente no banco de dados
+		$this->load->model('Cliente_model','cli',TRUE);
+		$existe = $this->cli->verificaExistencia($idcliente);
+		if($existe){
+			$dados = array(
+				'idcliente' => $idcliente,
+				'nome' => $this->input->post('nome'),
+				'email' => $this->input->post('email'),
+				'ativo' => $this->input->post('ativo')
+			);
+			$add = $this->cli->atualizar($dados);
+			if($add){
+				echo '<script>alert("cliente atualizado com sucesso!");</script>';
+				redirect('cliente/','refresh');
+			}else{
+				echo '<script>alert("não foi possível atualizar esse cliente!");</script>';
+				redirect('cliente/','refresh');
+			}
+		}else{
+			echo '<script>alert("Cliente não encontrado ou inexistente!");</script>';
+			redirect('cliente/','refresh');
+		}
+	}
+
 	public function logar()
 	{
 		//autenticar usuário
@@ -52,5 +94,5 @@ class Cliente extends CI_Controller {
 
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+/* End of file Cliente.php */
+/* Location: ./application/controllers/Cliente.php */

@@ -41,6 +41,24 @@
 $route['default_controller'] = "usuario";
 $route['404_override'] = '';
 
+$route['venda/detalhes/(:num)'] = "venda/detalhes/$1";
+$route['venda/delete/(:num)'] = "venda/delete/$1";
+
+$route['cliente/delete/(:num)'] = "cliente/delete/$1";
+$route['cliente/edit/(:num)'] = "cliente/edit/$1";
+$route['cliente/atualizar/(:num)'] = "cliente/atualizar/$1";
+
+$route['usuario/edit/(:num)'] = "usuario/edit/$1";
+$route['usuario/atualizar/(:num)'] = "usuario/atualizar/$1";
+$route['usuario/delete/(:num)'] = "usuario/delete/$1";
+
+$route['categoria/edit/(:num)'] = "categoria/edit/$1";
+$route['categoria/atualizar/(:num)'] = "categoria/atualizar/$1";
+$route['categoria/delete/(:num)'] = "categoria/delete/$1";
+
+$route['produto/edit/(:num)'] = "produto/edit/$1";
+$route['produto/atualizar/(:num)'] = "produto/atualizar/$1";
+$route['produto/delete/(:num)'] = "produto/delete/$1";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

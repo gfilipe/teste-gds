@@ -1,28 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Categoria extends CI_Controller {
-
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
 	
 	public function index()
 	{
 		//pagina para login de usuários
-		$this->load->model('Categoria_model','categoria',TRUE);
-		$this->load->view('lista_categorias');
+		$this->load->model('Categoria_model','cat',TRUE);
+		$data['categoria'] = $this->cat->showAllCategories();
+		$this->load->view('listar_categorias',$data);
 	}
 
 	public function add()
@@ -45,16 +30,58 @@ class Categoria extends CI_Controller {
 		}
 	}
 
-	public function deletar()
-	{
-		
-		
+	public function edit($idcategoria){
+		$this->load->model('Categoria_model','cat',TRUE);
+		$existe = $this->cat->verificaExistencia($idcategoria);
+		if($existe){
+			$data['categoria'] = $this->cat->getCategoriaByID($idcategoria);
+			$this->load->view('edit_categoria',$data);
+		}else{
+			echo '<script>alert("categoria não encontrada ou inexistente!");</script>';
+			redirect('categoria/','refresh');
+		}
 	}
 
-	public function alterar()
-	{
-		
-		
+	public function delete($idcategoria){
+		$this->load->model('Categoria_model','cat',TRUE);
+		$existe = $this->cat->verificaExistencia($idcategoria);
+		if($existe){
+			$del = $this->cat->delete($idcategoria);
+			if($del){
+				echo '<script>alert("categoria excluída com sucesso!");</script>';
+				redirect('categoria/','refresh');
+			}else{
+				echo '<script>alert("não foi possível excluir essa categoria!");</script>';
+				redirect('categoria/','refresh');
+			}
+		}else{
+			echo '<script>alert("categoria não encontrada ou inexistente!");</script>';
+			redirect('categoria/','refresh');
+		}
+	}
+
+	public function atualizar($idcategoria){
+		//atualiza a categoria no banco de dados
+		$this->load->model('Categoria_model','cat',TRUE);
+		$existe = $this->cat->verificaExistencia($idcategoria);
+		if($existe){
+			$dados = array(
+				'idcategoria' => $idcategoria,
+				'categoria' => $this->input->post('categoria'),
+				'status' => $this->input->post('status')
+			);
+			$add = $this->cat->atualizar($dados);
+			if($add){
+				echo '<script>alert("categoria atualizada com sucesso!");</script>';
+				redirect('categoria/','refresh');
+			}else{
+				echo '<script>alert("não foi possível atualizar essa categoria!");</script>';
+				redirect('categoria/','refresh');
+			}
+		}else{
+			echo '<script>alert("categoria não encontrada ou inexistente!");</script>';
+			redirect('categoria/','refresh');
+		}
 	}
 
 	public function listar()

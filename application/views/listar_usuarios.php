@@ -22,6 +22,15 @@
 		<div class="row">
 			<div class="col-md-12 tabelaVendas">
 				<h3>Lista de Usuários</h3>
+				<div class="pull-left btOpcoes">
+					<div class="btn-group">
+					  	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Opções <span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu">
+					    	<li><a href="<?php echo base_url(); ?>usuario/add" title="Cadastrar usuário">Cadastrar usuário</a></li>
+					  	</ul>
+					</div>
+				</div>
 				<table class="table">
 					<tbody>
 						<tr>
@@ -41,7 +50,7 @@
 								<td><?php echo $u['email']; ?></td>
 								<td><?php echo $u['status']; ?></td>
 								<td><a class="btn btn-success btn-sm" role="button" href="<?php echo base_url(); ?>usuario/edit/<?php echo $u['idusuario']; ?>" title="editar usuário">editar</a></td>
-								<td><a class="btn btn-danger btn-sm" role="button" href="<?php echo base_url(); ?>usuario/delete/<?php echo $u['idusuario']; ?>" title="excluir usuário">excluir</a></td>
+								<td><a class="btn btn-danger btn-sm btExcluir" idusuario="<?php echo $u['idusuario']; ?>" role="button" href="javascript:void(0);" title="excluir usuário">excluir</a></td>
 							</tr>
 						<?php 
 							}
@@ -52,4 +61,15 @@
 		</div>
     </div>
 </body>
+<script type="text/javascript">
+	$('a.btExcluir').on('click',function(){
+		idusuario = $(this).attr('idusuario');
+		excluir = window.confirm('Deseja realmente excluir esse usuário?');
+		if(excluir){
+			$(this).removeAttr('href');
+			$(this).attr('href','<?php echo base_url(); ?>usuario/delete/'+idusuario+'');
+			window.location.href = '<?php echo base_url(); ?>usuario/delete/'+idusuario+'';
+		}
+	});
+</script>
 </html>

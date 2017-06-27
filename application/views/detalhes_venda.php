@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Listar Vendas - Teste GDS Informática</title>
+	<title>Detalhes da Venda - Teste GDS Informática</title>
 		<link href="<?php echo base_url(); ?>assets/css/add_venda.css" rel="stylesheet" type="text/css">
 		<link href="<?php echo base_url(); ?>assets/css/nav_bar.css" rel="stylesheet" type="text/css">
 		<!-- Jquery -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="<?php echo base_url(); ?>assets/js/jquery.min.js"></script>
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<!-- Optional theme -->
@@ -21,55 +21,57 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12 tabelaVendas">
-				<h3>Lista de Vendas</h3>
+				<h3>Detalhes da Venda</h3>
 				<div class="pull-left btOpcoes">
 					<div class="btn-group">
 					  	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Opções <span class="caret"></span>
 					  	</button>
 					  	<ul class="dropdown-menu">
 					    	<li><a href="<?php echo base_url(); ?>venda/add" title="cadastrar venda">cadastrar venda</a></li>
+					    	<li><a href="<?php echo base_url(); ?>venda/" title="listar vendas">listar vendas</a></li>
 					  	</ul>
 					</div>
-				</div>
-				<table class="table tblVendas">
+				</div><br><br><br>
+				<h5>Id venda: <?php echo $detalhesVenda[0]['idvenda']; ?></h5>
+				<h5>Cliente: <?php echo $detalhesVenda[0]['nome_cliente']; ?></h5>
+				<h5>Usuário: <?php echo $detalhesVenda[0]['nome_usuario']; ?></h5>
+				<h5>Data da venda: <?php echo date('d/m/Y H:i:s',strtotime($detalhesVenda[0]['data'])); ?></h5>
+				<br>
+				<table class="table">
 					<tbody>
 						<tr>
-							<td>Id venda</td>
-							<td>Cliente</td>
-							<td>Usuário</td>
-							<td>Data venda</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
+							<td><strong>Id produto</strong></td>
+							<td><strong>Produto</strong></td>
+							<td><strong>Preço/unidade</strong></td>
+							<td><strong>Quantidade</strong></td>
+							<td><strong>Preço pago</strong></td>
 						</tr>
 						<?php 
-							foreach($vendas as $key => $v){
+							foreach($itensVenda as $key => $iv){
 					 	?>
 							<tr>
-								<td><?php echo $v['idvenda']; ?></td>
-								<td><?php echo $v['nome_cliente']; ?></td>
-								<td><?php echo $v['nome_usuario']; ?></td>
-								<td><?php echo date('d/m/Y H:i:s',strtotime($v['data'])); ?></td>
-								<td><a class="btn btn-success btn-sm" role="button" href="<?php echo base_url(); ?>venda/detalhes/<?php echo $v['idvenda']; ?>" title="visualizar venda">ver</a></td>
-								<td><a class="btn btn-danger btn-sm btExcluir" idvenda="<?php echo $v['idvenda']; ?>" href="javascrpt:void(0);" title="excluir venda">excluir</a></td>
+								<td><?php echo $iv['idproduto']; ?></td>
+								<td><?php echo $iv['produto']; ?></td>
+								<td><?php echo 'R$ '.number_format($iv['preco'],2,',','.'); ?></td>
+								<td><?php echo $iv['qtd']; ?></td>
+								<td><?php echo 'R$ '.number_format($iv['precopago'],2,',','.'); ?></td>
 							</tr>
 						<?php 
 							}
 						?>
+						<tr>
+							<td colspan="5">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="5">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="5">Valor Total: R$ <strong><?php echo number_format($valorTotal[0]['valorTotal'],2,',','.'); ?></strong></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
     </div>
 </body>
-<script type="text/javascript">
-	$('a.btExcluir').on('click',function(){
-		idvenda = $(this).attr('idvenda');
-		excluir = window.confirm('Deseja realmente excluir essa venda?');
-		if(excluir){
-			$(this).removeAttr('href');
-			$(this).attr('href','<?php echo base_url(); ?>venda/delete/'+idvenda+'');
-			window.location.href = '<?php echo base_url(); ?>venda/delete/'+idvenda+'';
-		}
-	});
-</script>
 </html>

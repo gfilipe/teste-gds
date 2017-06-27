@@ -29,23 +29,45 @@ class Venda extends CI_Controller {
 		$add = $this->sale->inserir($this->input->post());
 		if($add){
 			echo '<script>alert("Venda efetuada com sucesso!");</script>';
-			$this->index();
+			redirect('venda/','refresh');
 		}else{
 			echo '<script>alert("Venda não efetuada!");</script>';
-			$this->add();
+			redirect('venda/add','refresh');
 		}
 	}
 
-	public function deletar()
-	{
-		
+	public function delete($idvenda){
+		$this->load->model('Venda_model','sales',TRUE);
+		$existe = $this->sales->verificaExistencia($idvenda);
+		if($existe){
+			$statusDelete = $this->sales->delete($idvenda);
+			if($statusDelete){
+				echo '<script>alert("Venda excluída com sucesso!");</script>';
+				redirect('venda/','refresh');
+			}else{
+				echo '<script>alert("Não foi possível excluir essa venda!");</script>';
+				redirect('venda/','refresh');
+			}
+		}else{
+			echo '<script>alert("Venda não encontrada ou inexistente!");</script>';
+			redirect('venda/','refresh');
+		}
+
 		
 	}
 
-	public function alterar()
-	{
-		
-		
+	public function detalhes($idvenda){
+		$this->load->model('Venda_model','sales',TRUE);
+		$existe = $this->sales->verificaExistencia($idvenda);
+		if($existe){
+			$data['detalhesVenda'] = $this->sales->showSalesDetails($idvenda);
+			$data['itensVenda'] = $this->sales->showSalesItens($idvenda);
+			$data['valorTotal'] = $this->sales->showValorTotalVenda($idvenda);
+			$this->load->view('detalhes_venda',$data);
+		}else{
+			echo '<script>alert("Venda não encontrada ou inexistente!");</script>';
+			redirect('venda/','refresh');
+		}
 	}
 
 

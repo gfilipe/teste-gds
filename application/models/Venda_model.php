@@ -69,23 +69,21 @@ class Venda_model extends CI_Model {
                     'qtd' => $post['qtd_'.$idproduto.'']
                 );
                 $cadVendaItem = $this->db->insert('vendaitem',$dados);
-                if($cadVendaItem){
-                    return true;
-                }else{
-                    return false;
-                }
             }
+            return true;
         }else{
             return false;
         }
     }
 
-    public function deletar($post){
-        
-    }
-
-    public function alterar($post){
-        
+    public function delete($idvenda){
+        $deleteItemVenda = $this->db->query("DELETE FROM vendaitem WHERE idvenda = $idvenda");
+        $deleteVenda = $this->db->query("DELETE FROM venda WHERE idvenda = $idvenda");
+        if($deleteItemVenda && $deleteVenda){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function listar(){
@@ -97,20 +95,78 @@ class Venda_model extends CI_Model {
                 u.nome AS nome_usuario 
             FROM 
                 venda v 
-            INNER JOIN cliente c ON c.idcliente = v.idcliente 
-            INNER JOIN usuario u ON u.idusuario = v.idusuario 
-            WHERE 
-                v.status = 'S' 
-            AND 
-                c.ativo = 'S' 
-            AND 
-                u.status = 'S'
-
+            INNER JOIN 
+                cliente c ON c.idcliente = v.idcliente 
+            INNER JOIN 
+                usuario u ON u.idusuario = v.idusuario 
         ");
         return $query->result_array();
     }
 
-    
+    public function showSalesItens($idvenda){
+        $query = $this->db->query("
+            SELECT 
+                vi.idproduto, 
+                vi.idvenda, 
+                vi.preco, 
+                vi.precopago, 
+                vi.qtd, 
+                p.produto  
+            FROM 
+                vendaitem vi 
+            INNER JOIN 
+                produto p ON p.idproduto = vi.idproduto 
+            INNER JOIN 
+                venda v ON v.idvenda = vi.idvenda
+            WHERE 
+                vi.idvenda = $idvenda;
+        ");
+        return $query->result_array();
+    }
+
+    public function showSalesDetails($idvenda){
+        $query = $this->db->query("
+            SELECT 
+                v.idvenda, 
+                v.data, 
+                c.nome AS nome_cliente, 
+                u.nome AS nome_usuario 
+            FROM 
+                venda v 
+            INNER JOIN 
+                cliente c ON c.idcliente = v.idcliente 
+            INNER JOIN 
+                usuario u ON u.idusuario = v.idusuario 
+            WHERE 
+                v.idvenda = $idvenda 
+        ");
+        return $query->result_array();
+    }
+
+    public function showValorTotalVenda($idvenda){
+        $query = $this->db->query("
+            SELECT 
+                SUM(vi.precopago) AS valorTotal 
+            FROM 
+                vendaitem vi 
+            INNER JOIN 
+                produto p ON p.idproduto = vi.idproduto 
+            INNER JOIN 
+                venda v ON v.idvenda = vi.idvenda
+            WHERE 
+                vi.idvenda = $idvenda
+        ");
+        return $query->result_array();
+    }
+
+    public function verificaExistencia($idvenda){
+        $query = $this->db->query("SELECT idvenda FROM venda WHERE idvenda = ".$idvenda."");
+        if($query->num_rows() != 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
 }
